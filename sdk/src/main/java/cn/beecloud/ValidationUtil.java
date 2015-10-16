@@ -109,6 +109,8 @@ public class ValidationUtil
 	
 	final static String REFUND_SUCCESS = "退款已经成功！ ";
 	
+	final static String PRE_REFUND_SUCCESS = "预退款已经成功！ ";
+	
 	final static String PAY_SUCCESS = "支付成功！ ";
 	
 	public static BCPayResult validateResultFromBackend(Map<String, Object> ret) {

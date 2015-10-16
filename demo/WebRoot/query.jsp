@@ -20,8 +20,15 @@
 		window.location.href="refundUpdate.jsp?refund_no=" + refund_no + "&channel=" + channel;
 	}
 	
-	function startRefund(bill_no, total_fee, channel) {
-		window.location.href="startRefund.jsp?bill_no=" + bill_no + "&total_fee=" + total_fee + "&channel=" + channel;
+	function startRefund(bill_no, total_fee, channel, prefund, isYeeWap) {
+		alert(channel);
+		alert(isYeeWap);
+		window.location.href="startRefund.jsp?bill_no=" + bill_no + "&total_fee=" + total_fee + "&channel=" + channel + "&prefund=" + prefund + "&isYeeWap=" + isYeeWap;
+	
+	}
+	
+	function webhookTest(transactionId, channel, type) {
+		window.location.href="webhookTest.jsp?transactionId=" + transactionId + "&channel=" + channel + "&type=" + type;
 	}
 </script>
 </head>
@@ -31,7 +38,14 @@
 	
 	Object queryRefund = request.getParameter("queryRefund");
 	
+	Object queryPrefund = request.getParameter("queryPrefund");
+	
+	if (queryPrefund != null) {
+		response.sendRedirect("prefundQuery.jsp?channel=" + querytype);
+	}
+	
 	BCQueryResult bcQueryResult;
+	
 	
 	if(queryRefund != null) {
 		if (querytype.equals("aliQuery")) {
@@ -44,6 +58,7 @@
 			if (bcQueryResult.getType().ordinal() == 0) {
 				pageContext.setAttribute("refundList", bcQueryResult.getBcRefundList());
 				pageContext.setAttribute("refundSize", bcQueryResult.getBcRefundList().size());
+				System.out.println("refundList:" + bcQueryResult.getBcRefundList().size());
 			}else {
 				out.println(bcQueryResult.getErrMsg());
 				out.println(bcQueryResult.getErrDetail());
@@ -222,6 +237,7 @@
 			if (bcQueryResult.getType().ordinal() == 0) {
 				pageContext.setAttribute("bills", bcQueryResult.getBcOrders());
 				pageContext.setAttribute("billSize", bcQueryResult.getBcOrders().size());
+				pageContext.setAttribute("isYeeWap", "1");
 			} else {
 				out.println(bcQueryResult.getErrMsg());
 				out.println(bcQueryResult.getErrDetail());
@@ -280,12 +296,15 @@
 	}
 %>
 <c:if test="${billSize != null and billSize !=0}">
-	<table border="3" class="table"><tr><th>订单号</th><th>总金额</th><th>标题</th><th>渠道交易号</th><th>渠道</th><th>子渠道</th><th>已付款</th><th>附加数据</th><th>渠道详细信息</th><th>已退款</th><th>创建时间</th><th>发起退款</th></tr>
+	<table border="3" class="table"><tr><th>订单号</th><th>总金额</th><th>标题</th><th>渠道交易号</th><th>渠道</th><th>子渠道</th><th>已付款</th><th>附加数据</th><th>渠道详细信息</th><th>创建时间</th><th>发起退款</th><th>发起预退款</th><th>Webhook检测</th></tr>
 		<c:forEach var="bill" items="${bills}" varStatus="index"> 
-			<tr><td>${bill.billNo}</td><td>${bill.totalFee}</td><td>${bill.title}</td><td>${bill.channelTradeNo}</td><td>${bill.channel}</td><td>${bill.subChannel}</td><td>${bill.spayResult}</td><td>${bill.optional}</td><td>${bill.messageDetail}</td><td>${bill.refundResult}</td><td>${bill.dateTime}</td>
+			<tr><td>${bill.billNo}</td><td>${bill.totalFee}</td><td>${bill.title}</td><td>${bill.channelTradeNo}</td><td>${bill.channel}</td><td>${bill.subChannel}</td><td>${bill.spayResult}</td><td>${bill.optional}</td><td>${bill.messageDetail}</td><td>${bill.dateTime}</td>
 				<c:if test="${bill.spayResult == true && bill.refundResult == false && nochannel == null}">
 						<td align="center" >
-							<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.subChannel}')" value="退款"/>
+							<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.channel}', false, ${isYeeWap eq '1' ? '1':'0'})" value="退款"/>
+						</td>
+						<td align="center" >
+							<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.channel}', true, ${isYeeWap eq '1' ? '1':'0'})" value="预退款"/>
 						</td>
 				</c:if>
 				<c:if test="${bill.spayResult == true && bill.refundResult == false && nochannel != null}">
@@ -293,17 +312,27 @@
 							<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${channel}')" value="无渠道退款"/>
 						</td>
 				</c:if>
+				<c:if test="${bill.spayResult == true}">
+						<td align="center" >
+							<input class="button" type="button" onclick="webhookTest('${bill.billNo}', '${bill.channel}', 'PAY')" value="检测"/>
+						</td>
+				</c:if>
 			</tr>
 		</c:forEach> 
 	</table>
 </c:if>
 <c:if test="${refundSize != null and refundSize !=0}">
-	<table border="3" class="table"><tr><th>订单号</th><th>退款单号</th><th>标题</th><th>订单金额</th><th>退款金额</th><th>渠道</th><th>子渠道</th><th>是否结束</th><th>是否退款</th><th>附加数据</th><th>渠道详细信息</th><th>退款创建时间</th><c:if test="${isWeChat != null}"><th>退款状态查询</th></c:if></tr>
+	<table border="3" class="table"><tr><th>订单号</th><th>退款单号</th><th>标题</th><th>订单金额</th><th>退款金额</th><th>渠道</th><th>子渠道</th><th>是否结束</th><th>是否退款</th><th>附加数据</th><th>渠道详细信息</th><th>退款创建时间</th><th>退款查询</th><th>Webhook检测</th></tr>
 		<c:forEach var="refund" items="${refundList}" varStatus="index"> 
 			<tr align="center" ><td>${refund.billNo}</td><td>${refund.refundNo}</td><td>${refund.title}</td><td>${refund.totalFee}</td><td>${refund.refundFee}</td><td>${refund.channel}</td><td>${refund.subChannel}</td><td>${refund.finished}</td><td>${refund.refunded}</td><td>${refund.optional}</td><td>${refund.messageDetail}</td><td>${refund.dateTime}</td>
 			<c:if test="${fn:containsIgnoreCase(refund.channel,'WX') || fn:containsIgnoreCase(refund.channel,'YEE') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'KUAIQIAN')}">
 			<td>
 			<input class="button" type="button" onclick="queryStatus('${refund.channel}','${refund.refundNo}')" value="查询"/>
+			</td>
+			</c:if>
+			<c:if test="${refund.refunded == true && (fn:containsIgnoreCase(refund.channel,'ALI') || fn:containsIgnoreCase(refund.channel,'UN') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'JD'))}">
+			<td>
+			<input class="button" type="button" onclick="webhookTest('${refund.refundNo}', '${refund.channel}', 'REFUND')" value="检测"/>
 			</td>
 			</c:if>
 			</tr>

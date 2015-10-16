@@ -12,8 +12,10 @@ package cn.beecloud;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;   
@@ -161,6 +163,9 @@ public class BCPay {
             		} 
              		result.setType(RESULT_TYPE.OK);
         			result.setSucessMsg(ValidationUtil.REFUND_SUCCESS);
+        			if (para.getNeedApproval() != null && para.getNeedApproval()) {
+        				result.setSucessMsg(ValidationUtil.PRE_REFUND_SUCCESS);
+        			}
                  } else {
                 	result.setErrMsg(ret.get("result_msg").toString());
                  	result.setErrDetail(ret.get("err_detail").toString());
@@ -581,7 +586,240 @@ public class BCPay {
             return false;
     }
     
-    /**
+    public static BCQueryResult startQueryPrefundByConditon(BCQueryParameter para, String table) {
+    	BCQueryResult result;
+    	 
+    	Map<String, Object> param = new HashMap<String, Object>();
+    	param.put("table", table);
+    	param.put("appId", BCCache.getAppID());
+        param.put("appSign", BCUtilPrivate.getAppSignature());
+        List<Map<String, Object>> conditions = new LinkedList<Map<String, Object>>();
+        Map<String, Object> channel = new HashMap<String, Object>();
+        channel.put("cname", "channel");
+        channel.put("value", para.getChannel().toString());
+        channel.put("type", "e");
+        if (para.getChannel().toString().contains("_")) {
+        	channel.put("cname", "sub_channel");
+        }
+        Map<String, Object> needApproval = new HashMap<String, Object>();
+        needApproval.put("cname", "need_approval");
+        needApproval.put("value", true);
+        needApproval.put("type", "e");
+        conditions.add(channel);
+        conditions.add(needApproval);
+        String order = "createdat,desc";
+        param.put("conditions", conditions);
+        param.put("order", order);
+        param.put("limit", 20);
+        
+        result = new BCQueryResult();
+    	
+    	Client client = BCAPIClient.client;
+    	  
+    	StringBuilder sb = new StringBuilder();   
+        sb.append(BCUtilPrivate.getkApiQueryBillByCondition());
+        
+        try {
+            sb.append(URLEncoder.encode(
+                            JSONObject.fromObject(param).toString(), "UTF-8"));
+
+            WebTarget target = client.target(sb.toString());
+            Response response = target.request().get();
+            if (response.getStatus() == 200) {
+                Map<String, Object> ret = response.readEntity(Map.class);
+
+                boolean isSuccess = (ret.containsKey("resultCode") && StrUtil
+                                .toStr(ret.get("resultCode")).equals("0"));
+
+                if (isSuccess) {
+                	result.setType(RESULT_TYPE.OK);
+                    if (ret.containsKey("results")
+                                    && !StrUtil.empty(ret.get("results"))) {
+                        result.setBcRefundList(generateBCOrderListByCondition((List<Map<String, Object>>)ret.get("results")));
+                    }
+                    result.setTotalCount((Integer)ret.get("count"));
+                } else {
+                	result.setErrMsg(ret.get("result_msg").toString());
+                	result.setErrDetail(ret.get("err_detail").toString());
+                	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+                }
+            } else {
+            	result.setErrMsg("Not correct response!");
+            	result.setErrDetail("Not correct response!");
+            	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+            }
+        } catch (Exception e) {
+        	result.setErrMsg("Network error!");
+        	result.setErrDetail(e.getMessage());
+        	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+        }
+    	return result;
+    }
+    
+    
+    public static BCQueryResult startQueryCountByConditon(String channel, String table, String tranType, String tradeNo) {
+    	BCQueryResult result;
+    	 
+    	Map<String, Object> param = new HashMap<String, Object>();
+    	param.put("table", table);
+    	param.put("appId", BCCache.getAppID());
+        param.put("appSign", BCUtilPrivate.getAppSignature());
+        List<Map<String, Object>> conditions = new LinkedList<Map<String, Object>>();
+        Map<String, Object> channelType = new HashMap<String, Object>();
+        channelType.put("cname", "channel_type");
+        channelType.put("value", channel);
+        channelType.put("type", "e");
+        Map<String, Object> transactionType = new HashMap<String, Object>();
+        transactionType.put("cname", "transaction_type");
+        transactionType.put("value", tranType);
+        transactionType.put("type", "e");
+        Map<String, Object> outTradeNo = new HashMap<String, Object>();
+        outTradeNo.put("cname", "transaction_id");
+        outTradeNo.put("value", tradeNo);
+        outTradeNo.put("type", "e");
+        
+        
+        conditions.add(channelType);
+        conditions.add(transactionType);
+        conditions.add(outTradeNo);
+        param.put("conditions", conditions);
+        
+        result = new BCQueryResult();
+    	
+    	Client client = BCAPIClient.client;
+    	  
+    	StringBuilder sb = new StringBuilder();   
+        sb.append(BCUtilPrivate.getkApiQueryCountByCondition());
+        
+        try {
+            sb.append(URLEncoder.encode(
+                            JSONObject.fromObject(param).toString(), "UTF-8"));
+
+            WebTarget target = client.target(sb.toString());
+            Response response = target.request().get();
+            if (response.getStatus() == 200) {
+                Map<String, Object> ret = response.readEntity(Map.class);
+
+                boolean isSuccess = (ret.containsKey("resultCode") && StrUtil
+                                .toStr(ret.get("resultCode")).equals("0"));
+
+                if (isSuccess) {
+                	result.setType(RESULT_TYPE.OK);
+                    if (ret.containsKey("total")
+                                    && !StrUtil.empty(ret.get("total"))) {
+                        result.setTotalCount((Integer)ret.get("total"));
+                    }
+                } else {
+                	result.setErrMsg(ret.get("result_msg").toString());
+                	result.setErrDetail(ret.get("err_detail").toString());
+                	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+                }
+            } else {
+            	result.setErrMsg("Not correct response!");
+            	result.setErrDetail("Not correct response!");
+            	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+            }
+        } catch (Exception e) {
+        	result.setErrMsg("Network error!");
+        	result.setErrDetail(e.getMessage());
+        	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+        }
+    	return result;
+    }
+    
+    public static BCPayResult startBatchRefund(List<String> ids, String channel, Boolean agree) {
+    	BCPayResult result;
+    	
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("channel", channel);
+        param.put("agree", agree);
+        param.put("ids", ids);
+        param.put("app_id", BCCache.getAppID());
+    	param.put("timestamp", System.currentTimeMillis());
+    	param.put("app_sign", BCUtilPrivate.getAppSignature(param.get("timestamp").toString()));
+        
+        result = new BCPayResult();
+        
+        Client client = BCAPIClient.client;
+        WebTarget target = client.target(BCUtilPrivate.getApiBatchRefund());
+        try {
+            Response response = target.request().post(Entity.entity(param, MediaType.APPLICATION_JSON));
+            if (response.getStatus() == 200) {
+                Map<String, Object> ret = response.readEntity(Map.class);
+
+                boolean isSuccess = (ret.containsKey("result_code") && StrUtil
+                                .toStr(ret.get("result_code")).equals("0"));
+                if (isSuccess) {
+                	if (agree == true) {
+	                	if (ret.containsKey("result_map") && null != ret.get("result_map")) {
+	                		if (channel.equals("ALI")) {
+	                			result.setUrl(ret.get("url").toString());
+	                		}
+	                        result.setType(RESULT_TYPE.OK);
+	                        for (Entry perResult:((Map<String, Map<String, Object>>)ret.get("result_map")).entrySet()) {
+	                        	BCPayResult re = new BCPayResult();
+	                        	Map<String, Object> info = (Map<String, Object>)perResult.getValue();
+	                        	re.setObjectId(perResult.getKey().toString());
+	                        	if (info.get("result_code").toString().equals("0")){
+	                        		re.setType(RESULT_TYPE.OK);
+	                        	} else {
+	                        		re.setErrMsg(info.get("result_msg").toString());
+	                        		re.setErrDetail(info.get("err_detail").toString());
+	                        		re.setType(RESULT_TYPE.RUNTIME_ERROR);
+	                        	}
+	                        	result.getResultList().add(re);
+	                        }
+	                    }
+                	} else {
+                		result.setType(RESULT_TYPE.OK);
+                	}
+                } else {
+                	result.setErrMsg(ret.get("result_msg").toString());
+                	result.setErrDetail(ret.get("err_detail").toString());
+                	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+                }
+            } else {
+            	result.setErrMsg("Not correct response!");
+            	result.setErrDetail("Not correct response!");
+            	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+            }
+        } catch (Exception e) {
+        	result.setErrMsg("Network error!");
+        	result.setErrDetail(e.getMessage());
+        	result.setType(RESULT_TYPE.RUNTIME_ERROR);
+        }
+        return result;
+    }
+    
+    private static List<BCRefundBean> generateBCOrderListByCondition(List<Map<String, Object>> results){
+    	List<BCRefundBean> bcRefundList = new ArrayList<BCRefundBean>();
+		for (Map refund : results){
+			BCRefundBean bcRefund = new BCRefundBean();
+			bcRefund.setObjectId(refund.get("objectid").toString());
+			bcRefund.setBillNo(refund.get("bill_no").toString());
+	    	bcRefund.setChannel(refund.get("channel").toString());
+	    	bcRefund.setSubChannel(refund.get("sub_channel").toString());
+	    	bcRefund.setFinished((Boolean)refund.get("finish"));
+//	    	bcRefund.setCreatedTime((Long)refund.get("create_time"));
+	    	bcRefund.setCreatedTime((Long)refund.get("createdat"));
+//	    	bcRefund.setOptional(refund.get("optional").toString());
+	    	bcRefund.setRefunded((Boolean)refund.get("result"));
+	    	bcRefund.setTitle(refund.get("title").toString());
+	    	bcRefund.setTotalFee(refund.get("total_fee").toString());
+	    	bcRefund.setRefundFee(refund.get("refund_fee").toString());
+	    	bcRefund.setRefundNo(refund.get("refund_no").toString());
+//	    	bcRefund.setDateTime(BCUtilPrivate.transferDateFromLongToString((Long)refund.get("create_time")));
+	    	bcRefund.setDateTime(BCUtilPrivate.transferDateFromLongToString((Long)refund.get("createdat")));
+//			if (refund.containsKey("message_detail")) {
+//				bcRefund.setMessageDetail(refund.get("message_detail").toString());
+//			}
+	    	bcRefundList.add(bcRefund);
+		}
+		return bcRefundList;
+	}
+
+
+	/**
      * Build Payment parameters
      * @param param to be built
      * @param para used for building 

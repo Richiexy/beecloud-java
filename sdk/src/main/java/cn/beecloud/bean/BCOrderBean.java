@@ -5,6 +5,8 @@ package cn.beecloud.bean;
  * @author Ray
  */
 public class BCOrderBean {
+	
+	private String objectId;
 
 	private String billNo;
 	
@@ -124,5 +126,13 @@ public class BCOrderBean {
 
 	public void setRefundResult(boolean refundResult) {
 		this.refundResult = refundResult;
+	}
+
+	public String getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
 	}
 }

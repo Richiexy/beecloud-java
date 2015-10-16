@@ -17,6 +17,11 @@ class BCUtilPrivate {
         return getMessageDigest(str);
     }
     
+    static String getAppSignature() {
+        String str = BCCache.getAppID() + BCCache.getAppSecret() ;
+        return getMessageDigest(str);
+    }
+    
     static String getMessageDigest(String s) {
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
         try {
@@ -76,6 +81,18 @@ class BCUtilPrivate {
 	
 	static String getkApiTransfer() {
 		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/transfers";
+	}
+	
+	static String getkApiQueryBillByCondition() {
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/query/byCondition?para=";
+	}
+	
+	static String getkApiQueryCountByCondition() {
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/query/count?para=";
+	}
+	
+	static String getApiBatchRefund() {
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/approve";
 	}
 	
 	static String transferDateFromLongToString(long millisecond) {

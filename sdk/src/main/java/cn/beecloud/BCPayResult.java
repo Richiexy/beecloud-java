@@ -1,5 +1,7 @@
 package cn.beecloud;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import cn.beecloud.BCEumeration.RESULT_TYPE;
@@ -33,6 +35,8 @@ public class BCPayResult {
 	private String objectId;
 	
 	private Map<String, Object> wxJSAPIMap;
+	
+	private List<BCPayResult> resultList = new LinkedList<BCPayResult>();
 
 	public RESULT_TYPE getType() {
 		return type;
@@ -127,5 +131,13 @@ public class BCPayResult {
 
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
+	}
+
+	public List<BCPayResult> getResultList() {
+		return resultList;
+	}
+
+	public void setResultList(List<BCPayResult> resultList) {
+		this.resultList = resultList;
 	}
 }
