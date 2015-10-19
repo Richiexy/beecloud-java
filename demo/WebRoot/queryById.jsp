@@ -13,11 +13,11 @@
 <link href="demo.css" rel="stylesheet" type="text/css"/>
 <title>Query By Id</title>
 <script type="text/javascript">
-	function queryStatus(channel, refund_no) {
-		window.location.href="refundUpdate.jsp?refund_no=" + refund_no + "&channel=" + channel;
+	function queryStatus(channel, refund_no, isYeeWap) {
+		window.location.href="refundUpdate.jsp?refund_no=" + refund_no + "&channel=" + channel + "&isYeeWap=" + isYeeWap;
 	}
-	function startRefund(bill_no, total_fee, channel, prefund) {
-		window.location.href="startRefund.jsp?bill_no=" + bill_no + "&total_fee=" + total_fee + "&channel=" + channel + "&prefund=" + prefund;
+	function startRefund(bill_no, total_fee, channel, prefund, isYeeWap) {
+		window.location.href="startRefund.jsp?bill_no=" + bill_no + "&total_fee=" + total_fee + "&channel=" + channel + "&prefund=" + prefund + "&isYeeWap=" + isYeeWap;
 	}
 	function webhookTest(transactionId, channel, type) {
 		window.location.href="webhookTest.jsp?transactionId=" + transactionId + "&channel=" + channel + "&type=" + type;
@@ -57,11 +57,11 @@
 	
 <c:if test="${refund != null}">
 	<table border="3" class="table"><tr><th>订单号</th><th>退款单号</th><th>标题</th><th>订单金额</th><th>退款金额</th><th>渠道</th><th>子渠道</th><th>附加数据</th><th>渠道详细信息</th><th>是否结束</th><th>是否退款</th><th>退款创建时间</th>
-	<c:if test="${fn:containsIgnoreCase(refund.channel,'WX') || fn:containsIgnoreCase(refund.channel,'YEE') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'KUAIQIAN')}"><th>退款状态查询</th></c:if></tr>
+	<c:if test="${fn:containsIgnoreCase(refund.channel,'WX') || fn:containsIgnoreCase(refund.channel,'YEE') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'KUAIQIAN')}"><th>退款状态查询</th></c:if><th>Webhook检测</th></tr>
 		<tr align="center" ><td>${refund.billNo}</td><td>${refund.refundNo}</td><td>${refund.title}</td><td>${refund.totalFee}</td><td>${refund.refundFee}</td><td>${refund.channel}</td><td>${refund.subChannel}</td><td>${refund.optional}</td><td>${refund.messageDetail}</td><td>${refund.finished}</td><td>${refund.refunded}</td><td>${refund.dateTime}</td>
 		<c:if test="${fn:containsIgnoreCase(refund.channel,'WX') || fn:containsIgnoreCase(refund.channel,'YEE') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'KUAIQIAN')}">
 		<td>
-		<input class="button" type="button" onclick="queryStatus('${refund.subChannel}','${refund.refundNo}')" value="查询"/>
+		<input class="button" type="button" onclick="queryStatus('${refund.subChannel}','${refund.refundNo}', ${refund.subChannel eq 'YEE_WAP'?'1':'0'})" value="查询"/>
 		</td>
 		</c:if>
 		<c:if test="${refund.refunded == true && fn:containsIgnoreCase(refund.channel,'ALI') || fn:containsIgnoreCase(refund.channel,'UN') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'JD')}">
@@ -77,10 +77,10 @@
 		<tr align="center" ><td>${bill.billNo}</td><td>${bill.title}</td><td>${bill.totalFee}</td><td>${bill.channel}</td><td>${bill.subChannel}</td><td>${bill.channelTradeNo}</td><td>${bill.optional}</td><td>${bill.messageDetail}</td><td>${bill.refundResult}</td><td>${bill.spayResult}</td><td>${bill.dateTime}</td>
 		<c:if test="${bill.spayResult == true && bill.refundResult == false}">
 			<td align="center" >
-				<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.subChannel}', false)" value="退款"/>
+				<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.subChannel}', false, ${bill.subChannel eq 'YEE_WAP'?'1':'0' })" value="退款"/>
 			</td>
 			<td align="center" >
-				<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.subChannel}', true)" value="预退款"/>
+				<input class="button" type="button" onclick="startRefund('${bill.billNo}', ${bill.totalFee}, '${bill.subChannel}', true, ${bill.subChannel eq 'YEE_WAP'?'1':'0' })" value="预退款"/>
 			</td>
 		</c:if>
 		<c:if test="${bill.spayResult == true}">

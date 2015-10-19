@@ -16,13 +16,11 @@
 <link href="demo.css" rel="stylesheet" type="text/css"/>
 <title>redirect</title>
 <script type="text/javascript">
-	function queryStatus(channel, refund_no) {
-		window.location.href="refundUpdate.jsp?refund_no=" + refund_no + "&channel=" + channel;
+	function queryStatus(channel, refund_no, isYeeWap) {
+		window.location.href="refundUpdate.jsp?refund_no=" + refund_no + "&channel=" + channel + "&isYeeWap=" + isYeeWap;;
 	}
 	
 	function startRefund(bill_no, total_fee, channel, prefund, isYeeWap) {
-		alert(channel);
-		alert(isYeeWap);
 		window.location.href="startRefund.jsp?bill_no=" + bill_no + "&total_fee=" + total_fee + "&channel=" + channel + "&prefund=" + prefund + "&isYeeWap=" + isYeeWap;
 	
 	}
@@ -116,7 +114,7 @@
 			if (bcQueryResult.getType().ordinal() == 0) {
 				pageContext.setAttribute("refundList", bcQueryResult.getBcRefundList());
 				pageContext.setAttribute("refundSize", bcQueryResult.getBcRefundList().size());
-				pageContext.setAttribute("refundUpdate", true);
+				pageContext.setAttribute("isYeeWap", "1");
 			} else {
 				out.println(bcQueryResult.getErrMsg());
 				out.println(bcQueryResult.getErrDetail());
@@ -327,7 +325,7 @@
 			<tr align="center" ><td>${refund.billNo}</td><td>${refund.refundNo}</td><td>${refund.title}</td><td>${refund.totalFee}</td><td>${refund.refundFee}</td><td>${refund.channel}</td><td>${refund.subChannel}</td><td>${refund.finished}</td><td>${refund.refunded}</td><td>${refund.optional}</td><td>${refund.messageDetail}</td><td>${refund.dateTime}</td>
 			<c:if test="${fn:containsIgnoreCase(refund.channel,'WX') || fn:containsIgnoreCase(refund.channel,'YEE') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'KUAIQIAN')}">
 			<td>
-			<input class="button" type="button" onclick="queryStatus('${refund.channel}','${refund.refundNo}')" value="查询"/>
+			<input class="button" type="button" onclick="queryStatus('${refund.channel}','${refund.refundNo}', ${isYeeWap eq '1'?'1':'0'})" value="查询"/>
 			</td>
 			</c:if>
 			<c:if test="${refund.refunded == true && (fn:containsIgnoreCase(refund.channel,'ALI') || fn:containsIgnoreCase(refund.channel,'UN') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'JD'))}">
