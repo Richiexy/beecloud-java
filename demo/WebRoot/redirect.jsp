@@ -56,7 +56,7 @@
 		//微信 公众号id（读取配置文件conf.properties）及微信 redirec_uri
 		Properties prop = loadProperty();
 		String wxJSAPAppId = prop.get("wxJSAPIAppId").toString();
-		String wxJSAPIRedirectUrl = "http://apitest.beecloud.cn/demo/wxJSAPIRedirectUrl.jsp";
+		String wxJSAPIRedirectUrl = "http://javademo.beecloud.cn:8080/demo/wxJSAPIRedirectUrl.jsp";
 		String encodedWSJSAPIRedirectUrl = URLEncoder.encode(wxJSAPIRedirectUrl);
 		
 		//模拟商户的交易编号、标题、金额、附加数据
