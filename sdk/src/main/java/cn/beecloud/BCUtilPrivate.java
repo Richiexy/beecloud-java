@@ -11,6 +11,7 @@ import java.util.*;
 class BCUtilPrivate {
 
     static final String kApiVersion = "1";
+    static final String kApiVersion2 = "2";
     
     static String getAppSignature(String timeStamp) {
         String str = BCCache.getAppID() + timeStamp + BCCache.getAppSecret() ;
@@ -52,35 +53,35 @@ class BCUtilPrivate {
     }
 
 	static String getkApiPay() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/bill";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/bill";
 	}
 
 	static String getkApiRefund() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/refund";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/refund";
 	}
 
 	static String getkApiQueryBill() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/bills?para=";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/bills?para=";
 	}
 	
 	static String getkApiQueryBillById() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/bill";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/bill";
 	}
 
 	static String getkApiQueryRefund() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/refunds?para=";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/refunds?para=";
 	}
 	
 	static String getkApiQueryRefundById() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/refund";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/refund";
 	}
 	
 	static String getkApiRefundUpdate() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/refund/status?para=";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/refund/status?para=";
 	}
 	
 	static String getkApiTransfer() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/transfers";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/transfers";
 	}
 	
 	static String getkApiQueryBillByCondition() {
@@ -92,7 +93,7 @@ class BCUtilPrivate {
 	}
 	
 	static String getApiBatchRefund() {
-		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion + "/rest/approve";
+		return BCCache.apiHostArray[(int)(Math.random()*4)] + "/" + BCUtilPrivate.kApiVersion2 + "/rest/approve";
 	}
 	
 	static String transferDateFromLongToString(long millisecond) {

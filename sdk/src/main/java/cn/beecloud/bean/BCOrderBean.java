@@ -32,6 +32,8 @@ public class BCOrderBean {
 	
 	private boolean refundResult;
 	
+	private boolean revertResult;
+	
 	public String getBillNo() {
 		return billNo;
 	}
@@ -134,5 +136,13 @@ public class BCOrderBean {
 
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
+	}
+
+	public boolean isRevertResult() {
+		return revertResult;
+	}
+
+	public void setRevertResult(boolean revertResult) {
+		this.revertResult = revertResult;
 	}
 }
