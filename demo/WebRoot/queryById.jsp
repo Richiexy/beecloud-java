@@ -66,7 +66,7 @@
 		</c:if>
 		<c:if test="${refund.refunded == true && (fn:containsIgnoreCase(refund.channel,'ALI') || fn:containsIgnoreCase(refund.channel,'UN') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'JD'))}">
 			<td>
-			<input class="button" type="button" onclick="webhookTest('${refund.subChannel}', '${refund.channel}', 'REFUND')" value="检测"/>
+			<input class="button" type="button" onclick="webhookTest('${refund.refundNo}', '${refund.channel}', 'REFUND')" value="检测"/>
 			</td>
 			</c:if>
 		</tr>
