@@ -461,7 +461,7 @@
 				</c:if>
 				<c:if test="${bill.spayResult == true}">
 						<td align="center" >
-							<input class="button" type="button" onclick="webhookTest('${bill.billNo}', '${bill.channel}', 'PAY')" value="检测"/>
+							<input class="button" type="button" onclick="webhookTest('${bill.billNo}', '${bill.subChannel}', 'PAY')" value="检测"/>
 						</td>
 				</c:if>
 			</tr>
