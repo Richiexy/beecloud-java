@@ -64,7 +64,7 @@
 		<input class="button" type="button" onclick="queryStatus('${refund.subChannel}','${refund.refundNo}', ${refund.subChannel eq 'YEE_WAP'?'1':'0'})" value="查询"/>
 		</td>
 		</c:if>
-		<c:if test="${refund.refunded == true && fn:containsIgnoreCase(refund.channel,'ALI') || fn:containsIgnoreCase(refund.channel,'UN') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'JD')}">
+		<c:if test="${refund.refunded == true && (fn:containsIgnoreCase(refund.channel,'ALI') || fn:containsIgnoreCase(refund.channel,'UN') || fn:containsIgnoreCase(refund.channel,'BD') || fn:containsIgnoreCase(refund.channel,'JD'))}">
 			<td>
 			<input class="button" type="button" onclick="webhookTest('${refund.subChannel}', '${refund.channel}', 'REFUND')" value="检测"/>
 			</td>
