@@ -44,19 +44,19 @@
 	
 		Logger log = Logger.getLogger(this.getClass());
 		//returnUrl示例（商户根据自身系统指定）
-		String yeeWebReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/yeeWebReturnUrl.jsp";
-		String yeeWapReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/yeeWapReturnUrl.jsp";
-		String jdWebReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/jdWebReturnUrl.jsp";
-		String jdWapReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/jdWapReturnUrl.jsp";
-		String kqReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/kqReturnUrl.jsp";
-		String aliReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/aliReturnUrl.jsp";
-		String unReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/unReturnUrl.jsp";
-		String bdReturnUrl = "http://localhost:8080/PC-Web-Pay-Demo/bdReturnUrl.jsp";
+		String yeeWebReturnUrl = "http://javademo.beecloud.cn/demo/yeeWebReturnUrl.jsp";
+		String yeeWapReturnUrl = "http://javademo.beecloud.cn/demo/yeeWapReturnUrl.jsp";
+		String jdWebReturnUrl = "http://javademo.beecloud.cn/demo/jdWebReturnUrl.jsp";
+		String jdWapReturnUrl = "http://javademo.beecloud.cn/demo/jdWapReturnUrl.jsp";
+		String kqReturnUrl = "http://javademo.beecloud.cn/demo/kqReturnUrl.jsp";
+		String aliReturnUrl = "http://javademo.beecloud.cn/demo/aliReturnUrl.jsp";
+		String unReturnUrl = "http://javademo.beecloud.cn/demo/unReturnUrl.jsp";
+		String bdReturnUrl = "http://javademo.beecloud.cn/demo/bdReturnUrl.jsp";
 		
 		//微信 公众号id（读取配置文件conf.properties）及微信 redirec_uri
 		Properties prop = loadProperty();
 		String wxJSAPAppId = prop.get("wxJSAPIAppId").toString();
-		String wxJSAPIRedirectUrl = "http://javademo.beecloud.cn:8080/demo/wxJSAPIRedirectUrl.jsp";
+		String wxJSAPIRedirectUrl = "http://javademo.beecloud.cn/demo/wxJSAPIRedirectUrl.jsp";
 		String encodedWSJSAPIRedirectUrl = URLEncoder.encode(wxJSAPIRedirectUrl);
 		
 		//模拟商户的交易编号、标题、金额、附加数据
