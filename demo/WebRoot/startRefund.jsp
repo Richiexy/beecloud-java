@@ -58,6 +58,7 @@
 		param.setNeedApproval(true);
 		System.out.println("dd");
 	}
+	System.out.println("before start refund!");
 	BCPayResult result = BCPay.startBCRefund(param);
 	if(isYeeWap.equals("1")) {
 		BeeCloud.registerApp("c37d661d-7e61-49ea-96a5-68c34e83db3b", "c37d661d-7e61-49ea-96a5-68c34e83db3b");

@@ -21,6 +21,7 @@
 	}
 	
 	function startRefund(bill_no, total_fee, channel, prefund, isYeeWap) {
+		alert("here");
 		window.location.href="startRefund.jsp?bill_no=" + bill_no + "&total_fee=" + total_fee + "&channel=" + channel + "&prefund=" + prefund + "&isYeeWap=" + isYeeWap;
 	
 	}
